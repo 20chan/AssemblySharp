@@ -30,6 +30,17 @@ namespace AssemblySharp.Tests
                     ASM.push, 42,
                     ASM.pop, REG.EAX,
                     ASM.ret));
+
+            unsafe
+            {
+                int a = 84;
+                Assert.AreEqual(84,
+                    X86Assembly.ExecuteScript(
+                        ASM.mov, REG.EAX, (int)&a,
+                        ASM.sub, REG.EAX, 4,
+                        ASM.mov, REG.EAX, (REG.EAX + 4).Ptr,
+                        ASM.ret));
+            }
         }
 
         [TestMethod()]

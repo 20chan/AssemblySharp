@@ -108,6 +108,8 @@ namespace AssemblySharp
             _exp = exp;
         }
 
+        public object Ptr => throw new NotImplementedException();
+
         public static REG operator +(REG left, REG right)
         {
             return new REG(Expression.Add(left._exp, right._exp));
@@ -117,6 +119,17 @@ namespace AssemblySharp
         {
             var rExp = Expression.Constant(right, typeof(int));
             return new REG(Expression.Add(left._exp, rExp));
+        }
+
+        public static REG operator -(REG left, REG right)
+        {
+            return new REG(Expression.Subtract(left._exp, right._exp));
+        }
+
+        public static REG operator -(REG left, int right)
+        {
+            var rExp = Expression.Constant(right, typeof(int));
+            return new REG(Expression.Subtract(left._exp, rExp));
         }
     }
 }
