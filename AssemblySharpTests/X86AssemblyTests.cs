@@ -14,7 +14,22 @@ namespace AssemblySharp.Tests
         [TestMethod()]
         public void ExecuteScriptTest()
         {
-            Assert.Fail();
+            Assert.AreEqual(100,
+                X86Assembly.ExecuteScript(
+                    ASM.mov, REG.EAX, 100,
+                    ASM.ret));
+
+            Assert.AreEqual(200,
+                X86Assembly.ExecuteScript(
+                    ASM.mov, REG.EAX, 100,
+                    ASM.add, REG.EAX, 200,
+                    ASM.ret));
+
+            Assert.AreEqual(42,
+                X86Assembly.ExecuteScript(
+                    ASM.push, 42,
+                    ASM.pop, REG.EAX,
+                    ASM.ret));
         }
 
         [TestMethod()]
