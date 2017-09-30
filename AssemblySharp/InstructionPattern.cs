@@ -15,6 +15,7 @@ namespace AssemblySharp
         {
             new object[] { ASM.mov, R, I },
         };
+
         /// <summary>
         /// Check pattern right and return count of parameter.
         /// </summary>
@@ -32,7 +33,7 @@ namespace AssemblySharp
 
                 bool match = true;
                 for (int i = 1; i < pattern.Length; i++)
-                    if (pattern[i] != code[current + i])
+                    if (pattern[i] as Type != code[current + i].GetType())
                     {
                         // TODO: 패턴이 매칭되는게 여러개 있는 경우에 대한 해결법?
                         match = false; break;

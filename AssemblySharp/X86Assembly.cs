@@ -20,9 +20,10 @@ namespace AssemblySharp
 
             for (int i = 0; i < code.Length; i++)
             {
-                if (code[i] is int == false)
-                    if (code[i] is REG == false)
-                        throw new ArrayTypeMismatchException("Not supported type");
+                if (!(code[i] is ASM))
+                    if (!(code[i] is int))
+                        if (!(code[i] is REG))
+                            throw new ArrayTypeMismatchException("Not supported type");
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
                     throw new FormatException("Format error");

@@ -131,5 +131,10 @@ namespace AssemblySharp
             var rExp = Expression.Constant(right, typeof(int));
             return new REG(Expression.Subtract(left._exp, rExp));
         }
+
+        public override string ToString()
+        {
+            throw new Exception();
+        }
     }
 }
