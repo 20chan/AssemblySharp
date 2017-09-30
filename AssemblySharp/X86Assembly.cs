@@ -15,7 +15,27 @@ namespace AssemblySharp
             // 델리게이트를 리턴해야 할텐데 그 리턴 타입을 지정해서 줘야 겠지
             // 아마 제너릭을 사용해서 어떻게든 잘 해봐야 하지 않을까
             // 일단은 ObjectDelegate로 object로 모든걸 하는 걸루
-            throw new NotImplementedException();
+
+            string asmcode = "";
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                if (code[i] is int == false)
+                    if (code[i] is REG == false)
+                        throw new ArrayTypeMismatchException("Not supported type");
+                var cnt = InstructionPattern.CheckPattern(code, i);
+                if (cnt < 0)
+                    throw new FormatException("Format error");
+
+                asmcode += ConvertInlineAssembly((ASM)code[i], code.Skip(i).Take(cnt));
+            }
+
+            return RunMachineCode(CompileToMachineCode(asmcode));
+        }
+
+        public static string ConvertInlineAssembly(ASM inst, IEnumerable<object> parameters)
+        {
+            return $"{inst}, {string.Join(", ", parameters)}";
         }
 
         public static byte[] CompileToMachineCode(string asmcode)
