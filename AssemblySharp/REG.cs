@@ -108,7 +108,11 @@ namespace AssemblySharp
             _exp = exp;
         }
 
-        public object Ptr => throw new NotImplementedException();
+        /// <summary>
+        /// 포인터 안에 들어가는 연산의 큰 틀은 [base + index * scale + displacement]
+        /// base, index는 레지스터, scale은 1, 2, 4, 8중 하나
+        /// </summary>
+        public MEM Ptr => throw new NotImplementedException();
 
         public static REG operator +(REG left, REG right)
         {
@@ -134,7 +138,7 @@ namespace AssemblySharp
 
         public override string ToString()
         {
-            throw new Exception();
+            return _exp.ToString();
         }
     }
 }

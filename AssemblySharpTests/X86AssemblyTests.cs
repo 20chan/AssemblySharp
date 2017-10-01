@@ -44,6 +44,28 @@ namespace AssemblySharp.Tests
         }
 
         [TestMethod()]
+        public void ConvertInlineAssemblyTest()
+        {
+            Assert.AreEqual("ret",
+                X86Assembly.FromInline(ASM.ret, new object[] { }));
+            Assert.AreEqual("mov EAX, 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, 10 }));
+            Assert.AreEqual("mov EAX, [EBX+4]",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, (REG.EBX + 4).Ptr }));
+            Assert.AreEqual("mov WORD PTR [EBX], 2",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EBX.Ptr.Word, 2 }));
+        }
+
+        [TestMethod()]
+        public void ConvertInlineAssemblyErrorTest()
+        {
+            Assert.ThrowsException<FormatException>(() =>
+                X86Assembly.FromInline(ASM.mov, new object[] { ASM.mov }));
+            Assert.ThrowsException<FormatException>(() =>
+                X86Assembly.FromInline(ASM.mov, new object[] { ASM.mov }));
+        }
+
+        [TestMethod()]
         public void CompileToMachineCodeTest()
         {
             Assert.Fail();

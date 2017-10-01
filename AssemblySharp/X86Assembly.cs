@@ -23,20 +23,21 @@ namespace AssemblySharp
                 if (!(code[i] is ASM))
                     if (!(code[i] is int))
                         if (!(code[i] is REG))
-                            throw new ArrayTypeMismatchException("Not supported type");
+                            if (!(code[i] is MEM))
+                                throw new ArrayTypeMismatchException("Not supported type");
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
                     throw new FormatException("Format error");
 
-                asmcode += ConvertInlineAssembly((ASM)code[i], code.Skip(i).Take(cnt));
+                asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt - 1));
             }
 
             return RunMachineCode(CompileToMachineCode(asmcode));
         }
 
-        public static string ConvertInlineAssembly(ASM inst, IEnumerable<object> parameters)
+        public static string FromInline(ASM inst, IEnumerable<object> parameters)
         {
-            return $"{inst}, {string.Join(", ", parameters)}";
+            return $"{inst} {string.Join(", ", parameters)}";
         }
 
         public static byte[] CompileToMachineCode(string asmcode)

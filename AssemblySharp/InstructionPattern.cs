@@ -9,8 +9,16 @@ namespace AssemblySharp
     public class InstructionPattern
     {
         private static Type R = typeof(REG);
+        private static Type M = typeof(MEM);
         private static Type I = typeof(int);
 
+        /// <summary>
+        /// mov <reg>,<reg>
+        /// mov<reg>,<mem>
+        /// mov<mem>,<reg>
+        /// mov<reg>,<const>
+        /// mov<mem>,<const>
+        /// </summary>
         private static readonly object[][] PATTERNS = new object[][]
         {
             new object[] { ASM.mov, R, I },
