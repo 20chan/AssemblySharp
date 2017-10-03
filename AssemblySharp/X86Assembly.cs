@@ -29,7 +29,7 @@ namespace AssemblySharp
                 if (cnt < 0)
                     throw new FormatException("Format error");
 
-                asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt - 1));
+                asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt));
             }
 
             return RunMachineCode(CompileToMachineCode(asmcode));

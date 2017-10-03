@@ -8,10 +8,18 @@ namespace AssemblySharp
 {
     public class InstructionPattern
     {
-        private static Type R = typeof(REG);
-        private static Type M = typeof(MEM);
-        private static Type I = typeof(int);
+        private static PatternType R = PatternType.reg;
+        private static PatternType M = PatternType.mem;
+        private static PatternType C = PatternType.con;
+        private static PatternType GetPatternType(object obj)
+        {
+            // TODO: REG를 사이즈에 따라 분리
+            if (obj is REG) return PatternType.reg;
+            if (obj is MEM) return PatternType.mem;
+            if (obj is int) return PatternType.con;
 
+            return PatternType.NONE;
+        }
         /// <summary>
         /// mov <reg>,<reg>
         /// mov<reg>,<mem>
@@ -19,31 +27,36 @@ namespace AssemblySharp
         /// mov<reg>,<const>
         /// mov<mem>,<const>
         /// </summary>
-        private static readonly object[][] PATTERNS = new object[][]
-        {
-            new object[] { ASM.mov, R, I },
-        };
 
+        private static readonly Dictionary<ASM, PatternType[][]> PATTERNS = new Dictionary<ASM, PatternType[][]>()
+        {
+            { ASM.mov, new PatternType[][]
+                {
+                    new [] { R, R },
+                    new [] { R, M },
+                    new [] { M, R },
+                    new [] { R, C },
+                    new [] { M, C },
+                }
+            }
+        };
         /// <summary>
         /// Check pattern right and return count of parameter.
         /// </summary>
         /// <returns>Returns -1 if pattern wrong pattern. Else it return how many parameter it use.</returns>
         public static int CheckPattern(object[] code, int current)
         {
-            if (!(code[0] is ASM)) throw new FormatException("Should be ASM");
+            if (!(code[current] is ASM)) throw new FormatException("Should be ASM");
 
-            var asm = (ASM)code[0];
+            var asm = (ASM)code[current];
 
-            foreach (var pattern in PATTERNS)
+            foreach (var pattern in PATTERNS[asm])
             {
-                if ((ASM)pattern[0] != asm) continue;
-                if (pattern.Length > code.Length - current) continue;
-
+                if (pattern.Length > code.Length - current - 1) continue;
                 bool match = true;
-                for (int i = 1; i < pattern.Length; i++)
-                    if (pattern[i] as Type != code[current + i].GetType())
+                for (int i = 0; i < pattern.Length; i++)
+                    if (!pattern[i].HasFlag(GetPatternType(code[current + i + 1])))
                     {
-                        // TODO: 패턴이 매칭되는게 여러개 있는 경우에 대한 해결법?
                         match = false; break;
                     }
                 if (match) return pattern.Length;
