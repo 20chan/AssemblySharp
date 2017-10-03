@@ -38,7 +38,14 @@ namespace AssemblySharp
                     new [] { R, C },
                     new [] { M, C },
                 }
-            }
+            },
+            { ASM.push, new PatternType[][]
+                {
+                    new [] { R },
+                    new [] { M },
+                    new [] { C },
+                }
+            },
         };
         /// <summary>
         /// Check pattern right and return count of parameter.

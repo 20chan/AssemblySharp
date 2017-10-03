@@ -28,5 +28,16 @@ namespace AssemblySharp.Tests
             Assert.AreEqual(1,
                 InstructionPattern.CheckPattern(new object[] { ASM.push, REG.EAX.Ptr }, 0));
         }
+
+        [TestMethod()]
+        public void CheckInvalidPatternTest()
+        {
+            Assert.AreEqual(-1,
+                InstructionPattern.CheckPattern(new object[] { ASM.push }, 0));
+            Assert.AreEqual(-1,
+                InstructionPattern.CheckPattern(new object[] { ASM.mov, ASM.mov }, 0));
+            Assert.AreEqual(-1,
+                InstructionPattern.CheckPattern(new object[] { ASM.mov, REG.EAX, "well" }, 0));
+        }
     }
 }

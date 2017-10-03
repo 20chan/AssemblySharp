@@ -9,7 +9,7 @@ namespace AssemblySharp
     [Flags]
     public enum PatternType
     {
-        NONE = 0,
+        NONE = -1,
         reg32 = 1 << 0,
         reg16 = 1 << 1,
         reg8 = 1 << 2,
