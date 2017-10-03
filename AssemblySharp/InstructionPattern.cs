@@ -46,6 +46,12 @@ namespace AssemblySharp
                     new [] { C },
                 }
             },
+            {
+                ASM.ret, new PatternType[][]
+                {
+                    new PatternType[] { }
+                }
+            }
         };
         /// <summary>
         /// Check pattern right and return count of parameter.
@@ -59,7 +65,7 @@ namespace AssemblySharp
 
             foreach (var pattern in PATTERNS[asm])
             {
-                if (pattern.Length > code.Length - current - 1) continue;
+                if (pattern.Length != code.Length - current - 1) continue;
                 bool match = true;
                 for (int i = 0; i < pattern.Length; i++)
                     if (!pattern[i].HasFlag(GetPatternType(code[current + i + 1])))
