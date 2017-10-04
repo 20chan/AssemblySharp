@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASM.cs" />
+    <Compile Include="DelegateCreator.cs" />
     <Compile Include="InstructionPattern.cs" />
     <Compile Include="MEM.cs" />
     <Compile Include="PatternType.cs" />
