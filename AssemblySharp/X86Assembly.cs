@@ -7,10 +7,10 @@ using System.Runtime.InteropServices;
 
 namespace AssemblySharp
 {
-    public delegate object ObjectDelegate();
+    public delegate int IntDelegate();
     public static class X86Assembly
     {
-        public static T ExecuteScript<T>(params object[] code)
+        public static int ExecuteScript(params object[] code)
         {
             // 델리게이트를 리턴해야 할텐데 그 리턴 타입을 지정해서 줘야 겠지
             // 아마 제너릭을 사용해서 어떻게든 잘 해봐야 하지 않을까
@@ -32,7 +32,7 @@ namespace AssemblySharp
                 asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt));
             }
 
-            return RunMachineCode<T>(CompileToMachineCode(asmcode));
+            return RunMachineCode(CompileToMachineCode(asmcode));
         }
 
         public static string FromInline(ASM inst, IEnumerable<object> parameters)
@@ -46,16 +46,16 @@ namespace AssemblySharp
             throw new NotImplementedException();
         }
 
-        public static T RunMachineCode<T>(byte[] bytecode)
+        public static int RunMachineCode(byte[] bytecode)
         {
-            return CompileMachineCode<T>(bytecode)();
+            return CompileMachineCode(bytecode)();
         }
 
-        public static Func<T> CompileMachineCode<T>(byte[] bytecode)
+        public static IntDelegate CompileMachineCode(byte[] bytecode)
         {
             var buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit, WinAPI.MemoryProtection.ExecuteReadWrite);
             Marshal.Copy(bytecode, 0, buffer, bytecode.Length);
-            return Marshal.GetDelegateForFunctionPointer<dynamic>(buffer);
+            return Marshal.GetDelegateForFunctionPointer<IntDelegate>(buffer);
         }
     }
 }

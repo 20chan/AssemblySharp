@@ -15,18 +15,18 @@ namespace AssemblySharp.Tests
         public void ExecuteScriptTest()
         {
             Assert.AreEqual(100,
-                X86Assembly.ExecuteScript<int>(
+                X86Assembly.ExecuteScript(
                     ASM.mov, REG.EAX, 100,
                     ASM.ret));
 
             Assert.AreEqual(200,
-                X86Assembly.ExecuteScript<int>(
+                X86Assembly.ExecuteScript(
                     ASM.mov, REG.EAX, 100,
                     ASM.add, REG.EAX, 200,
                     ASM.ret));
 
             Assert.AreEqual(42,
-                X86Assembly.ExecuteScript<int>(
+                X86Assembly.ExecuteScript(
                     ASM.push, 42,
                     ASM.pop, REG.EAX,
                     ASM.ret));
@@ -35,7 +35,7 @@ namespace AssemblySharp.Tests
             {
                 int a = 84;
                 Assert.AreEqual(84,
-                    X86Assembly.ExecuteScript<int>(
+                    X86Assembly.ExecuteScript(
                         ASM.mov, REG.EAX, (int)&a,
                         ASM.sub, REG.EAX, 4,
                         ASM.mov, REG.EAX, (REG.EAX + 4).Ptr,
@@ -75,7 +75,7 @@ namespace AssemblySharp.Tests
         public void RunMachineCodeTest()
         {
             Assert.AreEqual(1,
-                X86Assembly.RunMachineCode<int>(new byte[] { 0xb8, 0x01, 0x00, 0x00, 0x00, 0xc3 }));
+                X86Assembly.RunMachineCode(new byte[] { 0xb8, 0x01, 0x00, 0x00, 0x00, 0xc3 }));
         }
     }
 }
