@@ -48,12 +48,14 @@ namespace AssemblySharp
 
         public static int RunMachineCode(byte[] bytecode)
         {
-            return CompileMachineCode(bytecode)();
+            var res = CompileMachineCode(bytecode, out var buf)();
+            WinAPI.VirtualFree(buf, bytecode.Length, WinAPI.FreeType.Release);
+            return res;
         }
 
-        public static IntDelegate CompileMachineCode(byte[] bytecode)
+        public static IntDelegate CompileMachineCode(byte[] bytecode, out IntPtr buffer)
         {
-            var buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit, WinAPI.MemoryProtection.ExecuteReadWrite);
+            buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit, WinAPI.MemoryProtection.ExecuteReadWrite);
             Marshal.Copy(bytecode, 0, buffer, bytecode.Length);
             return Marshal.GetDelegateForFunctionPointer<IntDelegate>(buffer);
         }

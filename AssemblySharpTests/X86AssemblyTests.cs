@@ -76,6 +76,8 @@ namespace AssemblySharp.Tests
         {
             Assert.AreEqual(1,
                 X86Assembly.RunMachineCode(new byte[] { 0xb8, 0x01, 0x00, 0x00, 0x00, 0xc3 }));
+            Assert.AreEqual(145764,
+                X86Assembly.RunMachineCode(new byte[] { 0xB8, 0x40, 0x01, 0x00, 0x00, 0x05, 0x24, 0x38, 0x02, 0x00, 0xc3 }));
         }
     }
 }

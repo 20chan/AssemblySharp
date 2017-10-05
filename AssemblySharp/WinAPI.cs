@@ -8,6 +8,9 @@ namespace AssemblySharp
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
 
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool VirtualFree(IntPtr lpAddress, int dwSize, FreeType dwFreeType);
+
         [Flags]
         public enum AllocationType
         {
@@ -37,6 +40,14 @@ namespace AssemblySharp
             NoCacheModifierflag = 0x200,
             WriteCombineModifierflag = 0x400
         }
+
+        [Flags]
+        public enum FreeType
+        {
+            Decommit = 0x4000,
+            Release = 0x8000,
+        }
+
         const int
             PAGE_READWRITE = 0x40,
             PROCESS_VM_OPERATION = 0x0008,
