@@ -47,17 +47,21 @@ namespace AssemblySharp
         }
 
         public static int RunMachineCode(byte[] bytecode)
+            => (int)RunMachineCode(bytecode, typeof(IntDelegate));
+
+        public static object RunMachineCode(byte[] bytecode, Type delegateType, params dynamic[] parameters)
         {
-            var res = CompileMachineCode(bytecode, out var buf)();
+            var func = CompileMachineCode(bytecode, out var buf, delegateType);
+            var res = func.DynamicInvoke(parameters);
             WinAPI.VirtualFree(buf, bytecode.Length, WinAPI.FreeType.Release);
             return res;
         }
 
-        public static IntDelegate CompileMachineCode(byte[] bytecode, out IntPtr buffer)
+        public static Delegate CompileMachineCode(byte[] bytecode, out IntPtr buffer, Type delegateType = null)
         {
-            buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit, WinAPI.MemoryProtection.ExecuteReadWrite);
+            buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit | WinAPI.AllocationType.Reserve, WinAPI.MemoryProtection.ExecuteReadWrite);
             Marshal.Copy(bytecode, 0, buffer, bytecode.Length);
-            return Marshal.GetDelegateForFunctionPointer<IntDelegate>(buffer);
+            return Marshal.GetDelegateForFunctionPointer(buffer, delegateType ?? typeof(IntDelegate));
         }
     }
 }
