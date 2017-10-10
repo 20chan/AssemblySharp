@@ -21,5 +21,9 @@ namespace AssemblySharp
         con16 = 1 << 5,
         con8 = 1 << 6,
         con = con32 | con16 | con8,
+
+        cl,
+
+        label,
     }
 }

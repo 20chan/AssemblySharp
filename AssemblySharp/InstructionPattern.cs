@@ -8,9 +8,13 @@ namespace AssemblySharp
 {
     public class InstructionPattern
     {
+        private static PatternType L = PatternType.label;
         private static PatternType R = PatternType.reg;
+        private static PatternType R32 = PatternType.reg32;
         private static PatternType M = PatternType.mem;
         private static PatternType C = PatternType.con;
+        private static PatternType C8 = PatternType.con8;
+        private static PatternType CL = PatternType.cl;
         private static PatternType GetPatternType(object obj)
         {
             // TODO: REG를 사이즈에 따라 분리
@@ -27,32 +31,145 @@ namespace AssemblySharp
         /// mov<reg>,<const>
         /// mov<mem>,<const>
         /// </summary>
+        /// 
 
-        private static readonly Dictionary<ASM, PatternType[][]> PATTERNS = new Dictionary<ASM, PatternType[][]>()
+        private static Dictionary<ASM, PatternType[][]> _patterns;
+
+        private static Dictionary<ASM, PatternType[][]> PATTERNS
         {
-            { ASM.mov, new PatternType[][]
-                {
-                    new [] { R, R },
-                    new [] { R, M },
-                    new [] { M, R },
-                    new [] { R, C },
-                    new [] { M, C },
-                }
-            },
-            { ASM.push, new PatternType[][]
-                {
-                    new [] { R },
-                    new [] { M },
-                    new [] { C },
-                }
-            },
+            get
             {
-                ASM.ret, new PatternType[][]
+                if (_patterns == null)
                 {
-                    new PatternType[] { }
+                    var defaultType = new PatternType[][]
+                    {
+                        new [] { R, R },
+                        new [] { R, M },
+                        new [] { M, R },
+                        new [] { R, C },
+                        new [] { M, C },
+                    };
+                    var RM = new PatternType[][]
+                    {
+                        new [] { R }, new [] { M }
+                    };
+                    var shift = new PatternType[][]
+                    {
+                        new [] { R, C8 },
+                        new [] { M, C8 },
+                        new [] { R, CL },
+                        new [] { M, CL },
+                    };
+                    var label = new PatternType[][]
+                    {
+                        new [] { L },
+                    };
+
+                    _patterns = new Dictionary<ASM, PatternType[][]>()
+                    {
+                        {
+                            ASM.mov, defaultType
+                        },
+                        {
+                            ASM.push, new PatternType[][]
+                            {
+                                new [] { R },
+                                new [] { M },
+                                new [] { C },
+                            }
+                        },
+                        {
+                            ASM.pop, RM
+                        },
+                        {
+                            ASM.lea, new PatternType[][]
+                            {
+                                new [] { R, M }
+                            }
+                        },
+                        {
+                            ASM.add, defaultType
+                        },
+                        {
+                            ASM.sub, defaultType
+                        },
+                        {
+                            ASM.inc, RM
+                        },
+                        {
+                            ASM.dec, RM
+                        },
+                        {
+                            ASM.imul, new PatternType[][]
+                            {
+                                new [] { R32, R32 },
+                                new [] { R32, M },
+                                new [] { R32, R32, C },
+                                new [] { R32, M, C },
+                            }
+                        },
+                        {
+                            ASM.idiv, new PatternType[][]
+                            {
+                                new [] { R32 },
+                                new [] { M },
+                            }
+                        },
+                        {
+                            ASM.and, defaultType
+                        },
+                        {
+                            ASM.or, defaultType
+                        },
+                        {
+                            ASM.xor, defaultType
+                        },
+                        {
+                            ASM.not, RM
+                        },
+                        {
+                            ASM.neg, RM
+                        },
+                        {
+                            ASM.shl, shift
+                        },
+                        {
+                            ASM.shr, shift
+                        },
+                        {
+                            ASM.jmp, label
+                        },
+                        {  ASM.je, label },
+                        {  ASM.jne, label },
+                        {  ASM.jz, label },
+                        {  ASM.jg, label },
+                        {  ASM.jge, label },
+                        {  ASM.jl, label },
+                        {  ASM.jle, label },
+                        {
+                            ASM.cmp, new PatternType[][]
+                            {
+                                new [] { R, R },
+                                new [] { R, M },
+                                new [] { M, R },
+                                new [] { R, C },
+                            }
+                        },
+                        {
+                            ASM.call, label
+                        },
+                        {
+                            ASM.ret, new PatternType[][]
+                            {
+                                new PatternType[] { }
+                            }
+                        },
+                    };
                 }
+                return _patterns;
             }
-        };
+        }
+
         /// <summary>
         /// Check pattern right and return count of parameter.
         /// </summary>
