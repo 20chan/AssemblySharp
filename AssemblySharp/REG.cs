@@ -108,6 +108,73 @@ namespace AssemblySharp
             _exp = exp;
         }
 
+        public bool IsValidExpressionForMemory()
+            => IsValidExpressionForMemory(_exp);
+
+        public static bool IsValidExpressionForMemory(Expression exp)
+        {
+            if (exp.NodeType == ExpressionType.Parameter)
+                return true;
+            if (exp.NodeType == ExpressionType.Add)
+            {
+                var bi = exp as BinaryExpression;
+                    if (bi.Left.NodeType != ExpressionType.Parameter) return false;
+                return CheckRootAddExpression(bi.Left as ParameterExpression, bi.Right);
+            }
+            else if (exp.NodeType == ExpressionType.Multiply)
+            {
+                // index (*) scale
+                return CheckIndexScaleExpression(exp as BinaryExpression);
+            }
+            else return false;
+        }
+
+        private static bool CheckRootAddExpression(ParameterExpression left, Expression right)
+        {
+            /*
+             * One of next three states.
+             * base (+) index
+             * base (+) index + displacement
+             * base (+) index * scale + displacement
+             */
+             // 안한거 그거 그거 eax + 8
+            if (right.NodeType == ExpressionType.Parameter)
+                return true;
+            else if (right.NodeType == ExpressionType.Add)
+            {
+                /*
+                 * base + index (+) displacement
+                 * base + index * scale (+) displacement
+                 */
+                var inner = right as BinaryExpression;
+                if (inner.Left.NodeType != ExpressionType.Parameter) return false;
+
+                if (inner.Right.NodeType == ExpressionType.Parameter)
+                    // base + (index) + (displacement)
+                    return true;
+                else if (inner.Right.NodeType == ExpressionType.Multiply)
+                    // base + (index * scale) + displacement
+                    return CheckIndexScaleExpression(inner.Right as BinaryExpression);
+                else return false;
+            }
+            else if (right.NodeType == ExpressionType.Multiply)
+            {
+                // base + index (*) scale
+                return CheckIndexScaleExpression(right as BinaryExpression);
+            }
+            else return false;
+        }
+
+        private static bool CheckIndexScaleExpression(BinaryExpression exp)
+        {
+            if (exp.Left.NodeType != ExpressionType.Parameter)
+                return false;
+            if (exp.Right.NodeType != ExpressionType.Constant)
+                return false;
+            var scale = (int)(exp.Right as ConstantExpression).Value;
+            return new[] { 1, 2, 4, 8 }.Contains(scale);
+        }
+
         /// <summary>
         /// 포인터 안에 들어가는 연산의 큰 틀은 [base + index * scale + displacement]
         /// base, index는 레지스터, scale은 1, 2, 4, 8중 하나
@@ -122,18 +189,13 @@ namespace AssemblySharp
         public static REG operator +(REG left, int right)
         {
             var rExp = Expression.Constant(right, typeof(int));
-            return new REG(Expression.Add(left._exp, rExp));
+            return new REG(Expression.Multiply(left._exp, rExp));
         }
 
-        public static REG operator -(REG left, REG right)
-        {
-            return new REG(Expression.Subtract(left._exp, right._exp));
-        }
-
-        public static REG operator -(REG left, int right)
+        public static REG operator *(REG left, int right)
         {
             var rExp = Expression.Constant(right, typeof(int));
-            return new REG(Expression.Subtract(left._exp, rExp));
+            return new REG(Expression.Multiply(left._exp, rExp));
         }
 
         public override string ToString()

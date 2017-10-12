@@ -19,9 +19,6 @@ namespace AssemblySharp
             // if (!IsValidRegistry(reg)) throw new ArgumentException();
         }
 
-        private static bool IsValidRegistry(REG reg)
-        {
-            throw new NotImplementedException();
-        }
+        private static bool IsValidRegistry(REG reg) => reg.IsValidExpressionForMemory();
     }
 }

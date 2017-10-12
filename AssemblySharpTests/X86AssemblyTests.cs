@@ -76,6 +76,7 @@ namespace AssemblySharp.Tests
             }
         }
 
+        [TestCategory("ConvertInlineAssembly")]
         [TestMethod()]
         public void ConvertInlineAssemblyTest()
         {
@@ -87,6 +88,17 @@ namespace AssemblySharp.Tests
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, (REG.EBX + 4).Ptr }));
             Assert.AreEqual("mov WORD PTR [EBX], 2",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EBX.Ptr.Word, 2 }));
+        }
+
+        [TestCategory("ConvertInlineAssembly")]
+        [TestMethod()]
+        public void ConvertInlineAssemblyRawCodeTest()
+        {
+            string code = "Nobody care this project";
+            Assert.AreEqual(code, X86Assembly.FromInline(new object[]
+            {
+                code
+            }));
         }
 
         [TestMethod()]
