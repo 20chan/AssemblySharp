@@ -15,6 +15,16 @@ int result = (int)X86Assembly.ExecuteScript(
     ASM.ADD, REG.EAX, a,
     ASM.RET);
 Console.WriteLine(result); // 300
+
+int i = 100;
+result = X86Assembly.ExecuteScript(
+    ASM.mov, REG.EAX, 0,
+    ASM.mov, REG.ECX, i,
+    new Label("myloop"),
+    ASM.add, REG.EAX, REG.ECX,
+    ASM.loop, "myloop",
+    ASM.ret));
+Console.WriteLine(result); // 5050
 ```
 
 ## [LICENSE](/LICENSE)

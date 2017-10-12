@@ -12,10 +12,11 @@ namespace AssemblySharp
     {
         public static int ExecuteScript(params object[] code)
         {
-            // 델리게이트를 리턴해야 할텐데 그 리턴 타입을 지정해서 줘야 겠지
-            // 아마 제너릭을 사용해서 어떻게든 잘 해봐야 하지 않을까
-            // 일단은 ObjectDelegate로 object로 모든걸 하는 걸루
+            return (int)ExecuteScript(code, typeof(IntDelegate));
+        }
 
+        public static object ExecuteScript(object[] code, Type delegateType, params dynamic[] parameters)
+        {
             string asmcode = "";
 
             for (int i = 0; i < code.Length; i++)
@@ -34,7 +35,7 @@ namespace AssemblySharp
                 asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt));
             }
 
-            return RunMachineCode(CompileToMachineCode(asmcode));
+            return RunMachineCode(CompileToMachineCode(asmcode), delegateType, parameters);
         }
 
         public static string FromInline(ASM inst, IEnumerable<object> parameters)
