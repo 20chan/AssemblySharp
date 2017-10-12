@@ -47,6 +47,32 @@ namespace AssemblySharp.Tests
                         ASM.sub, REG.EAX, 4,
                         ASM.mov, REG.EAX, (REG.EAX + 4).Ptr,
                         ASM.ret));
+
+                byte[] buffer = new byte[12];
+                fixed (byte* newBuffer = &buffer[0])
+                {
+                    try
+                    {
+                        X86Assembly.ExecuteScript(new object[]
+                        {
+                            ASM.push, REG.EBX,
+                            ASM.mov, REG.EAX, 0,
+                            new RawAssemblyCode("cpuid"),
+                            ASM.mov, REG.EAX, (REG.ESP + 8).Ptr,
+                            ASM.mov, (REG.EAX + 0).Ptr, REG.EBX,
+                            ASM.mov, (REG.EAX + 4).Ptr, REG.EDX,
+                            ASM.mov, (REG.EAX + 8).Ptr, REG.ECX,
+                            ASM.pop, REG.EBX,
+                            ASM.ret,
+                        }, typeof(CPUID0Delegate), new IntPtr(newBuffer));
+
+                        CollectionAssert.AreNotEqual(buffer, new byte[12]);
+                    }
+                    catch
+                    {
+                        Assert.Fail();
+                    }
+                }
             }
         }
 

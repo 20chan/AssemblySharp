@@ -172,7 +172,7 @@ namespace AssemblySharp
         /// <returns>Returns -1 if pattern wrong pattern. Else it return how many parameter it use.</returns>
         public static int CheckPattern(object[] code, int current)
         {
-            if (code[current] is Label) return 0;
+            if (code[current] is Label || code[current] is RawAssemblyCode) return 0;
             if (!(code[current] is ASM)) throw new FormatException("Should be ASM");
 
             var asm = (ASM)code[current];

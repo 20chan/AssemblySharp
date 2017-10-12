@@ -45,6 +45,7 @@
     <Compile Include="Label.cs" />
     <Compile Include="MEM.cs" />
     <Compile Include="PatternType.cs" />
+    <Compile Include="RawAssemblyCode.cs" />
     <Compile Include="REG.cs" />
     <Compile Include="WinAPI.cs" />
     <Compile Include="X86Assembly.cs" />

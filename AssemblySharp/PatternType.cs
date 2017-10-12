@@ -22,9 +22,11 @@ namespace AssemblySharp
         con8 = 1 << 6,
         con = con32 | con16 | con8,
 
-        cl,
+        cl = 1 << 2 | 1 << 7,
 
-        label = 1 << 7,
-        label_string = 1 << 8,
+        label = 1 << 8,
+        label_string = 1 << 9,
+
+        raw = 1 << 10,
     }
 }

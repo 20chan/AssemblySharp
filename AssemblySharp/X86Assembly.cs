@@ -27,7 +27,8 @@ namespace AssemblySharp
                             if (!(code[i] is MEM))
                                 if (!(code[i] is string))
                                     if (!(code[i] is Label))
-                                        throw new ArrayTypeMismatchException("Not supported type");
+                                        if (!(code[i] is RawAssemblyCode))
+                                            throw new ArrayTypeMismatchException("Not supported type");
 
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
@@ -36,6 +37,15 @@ namespace AssemblySharp
             }
 
             return RunMachineCode(CompileToMachineCode(asmcode), delegateType, parameters);
+        }
+
+        public static string FromInline(object[] code)
+        {
+            if (code[0] is ASM) return FromInline((ASM)code[0], code.Skip(1));
+            if (code[0] is Label) return $"{(code[0] as Label).Name}:";
+            if (code[0] is RawAssemblyCode) return (code[0] as RawAssemblyCode).Code;
+
+            throw new Exception();
         }
 
         public static string FromInline(ASM inst, IEnumerable<object> parameters)
