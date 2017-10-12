@@ -137,8 +137,10 @@ namespace AssemblySharp
              * base (+) index + displacement
              * base (+) index * scale + displacement
              */
-             // 안한거 그거 그거 eax + 8
+            // 안한거 그거 그거 eax + 8
             if (right.NodeType == ExpressionType.Parameter)
+                return true;
+            else if (right.NodeType == ExpressionType.Constant)
                 return true;
             else if (right.NodeType == ExpressionType.Add)
             {
@@ -147,15 +149,11 @@ namespace AssemblySharp
                  * base + index * scale (+) displacement
                  */
                 var inner = right as BinaryExpression;
-                if (inner.Left.NodeType != ExpressionType.Parameter) return false;
-
-                if (inner.Right.NodeType == ExpressionType.Parameter)
-                    // base + (index) + (displacement)
-                    return true;
-                else if (inner.Right.NodeType == ExpressionType.Multiply)
-                    // base + (index * scale) + displacement
-                    return CheckIndexScaleExpression(inner.Right as BinaryExpression);
-                else return false;
+                if (inner.Right.NodeType != ExpressionType.Constant) return false;
+                if (inner.Left.NodeType == ExpressionType.Parameter) return true;
+                if (inner.Left.NodeType == ExpressionType.Multiply)
+                    return CheckIndexScaleExpression(inner.Left as BinaryExpression);
+                return false;
             }
             else if (right.NodeType == ExpressionType.Multiply)
             {
