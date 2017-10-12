@@ -28,6 +28,16 @@ namespace AssemblySharp.Tests
                     ASM.pop, REG.EAX,
                     ASM.ret));
 
+            int i = 100;
+            Assert.AreEqual(5050,
+                X86Assembly.ExecuteScript(
+                    ASM.mov, REG.EAX, 0,
+                    ASM.mov, REG.ECX, i,
+                    new Label("myloop"),
+                        ASM.add, REG.EAX, REG.ECX,
+                    ASM.loop, "myloop",
+                    ASM.ret));
+
             unsafe
             {
                 int a = 84;

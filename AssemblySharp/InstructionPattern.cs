@@ -8,7 +8,7 @@ namespace AssemblySharp
 {
     public class InstructionPattern
     {
-        private static PatternType L = PatternType.label;
+        private static PatternType LS = PatternType.label_string;
         private static PatternType R = PatternType.reg;
         private static PatternType R32 = PatternType.reg32;
         private static PatternType M = PatternType.mem;
@@ -21,17 +21,10 @@ namespace AssemblySharp
             if (obj is REG) return PatternType.reg;
             if (obj is MEM) return PatternType.mem;
             if (obj is int) return PatternType.con;
+            if (obj is Label || obj is string) return PatternType.label;
 
             return PatternType.NONE;
         }
-        /// <summary>
-        /// mov <reg>,<reg>
-        /// mov<reg>,<mem>
-        /// mov<mem>,<reg>
-        /// mov<reg>,<const>
-        /// mov<mem>,<const>
-        /// </summary>
-        /// 
 
         private static Dictionary<ASM, PatternType[][]> _patterns;
 
@@ -62,7 +55,7 @@ namespace AssemblySharp
                     };
                     var label = new PatternType[][]
                     {
-                        new [] { L },
+                        new [] { LS },
                     };
 
                     _patterns = new Dictionary<ASM, PatternType[][]>()
@@ -159,6 +152,9 @@ namespace AssemblySharp
                             ASM.call, label
                         },
                         {
+                            ASM.loop, label
+                        },
+                        {
                             ASM.ret, new PatternType[][]
                             {
                                 new PatternType[] { }
@@ -176,6 +172,7 @@ namespace AssemblySharp
         /// <returns>Returns -1 if pattern wrong pattern. Else it return how many parameter it use.</returns>
         public static int CheckPattern(object[] code, int current)
         {
+            if (code[current] is Label) return 0;
             if (!(code[current] is ASM)) throw new FormatException("Should be ASM");
 
             var asm = (ASM)code[current];
@@ -185,10 +182,12 @@ namespace AssemblySharp
                 if (pattern.Length != code.Length - current - 1) continue;
                 bool match = true;
                 for (int i = 0; i < pattern.Length; i++)
+                {
                     if (!pattern[i].HasFlag(GetPatternType(code[current + i + 1])))
                     {
                         match = false; break;
                     }
+                }
                 if (match) return pattern.Length;
             }
 

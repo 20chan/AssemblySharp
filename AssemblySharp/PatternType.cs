@@ -24,6 +24,7 @@ namespace AssemblySharp
 
         cl,
 
-        label,
+        label = 1 << 7,
+        label_string = 1 << 8,
     }
 }

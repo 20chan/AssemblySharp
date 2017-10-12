@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ASM.cs" />
     <Compile Include="InstructionPattern.cs" />
+    <Compile Include="Label.cs" />
     <Compile Include="MEM.cs" />
     <Compile Include="PatternType.cs" />
     <Compile Include="REG.cs" />

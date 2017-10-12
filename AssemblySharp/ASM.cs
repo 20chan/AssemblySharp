@@ -34,6 +34,7 @@ namespace AssemblySharp
         je, jne, jz, jg, jge, jl, jle,
         cmp,
         call,
+        loop,
         ret,
         #endregion
     }

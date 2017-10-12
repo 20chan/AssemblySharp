@@ -24,11 +24,13 @@ namespace AssemblySharp
                     if (!(code[i] is int))
                         if (!(code[i] is REG))
                             if (!(code[i] is MEM))
-                                throw new ArrayTypeMismatchException("Not supported type");
+                                if (!(code[i] is string))
+                                    if (!(code[i] is Label))
+                                        throw new ArrayTypeMismatchException("Not supported type");
+
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
                     throw new FormatException("Format error");
-
                 asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt));
             }
 
