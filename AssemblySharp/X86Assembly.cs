@@ -50,7 +50,7 @@ namespace AssemblySharp
 
         public static string FromInline(ASM inst, IEnumerable<object> parameters)
         {
-            return $"{inst} {string.Join(", ", parameters)}";
+            return parameters.Count() == 0 ? inst.ToString() : $"{inst} {string.Join(", ", parameters)}";
         }
 
         public static byte[] CompileToMachineCode(string asmcode)

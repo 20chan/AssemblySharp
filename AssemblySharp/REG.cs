@@ -137,7 +137,6 @@ namespace AssemblySharp
              * base (+) index + displacement
              * base (+) index * scale + displacement
              */
-            // 안한거 그거 그거 eax + 8
             if (right.NodeType == ExpressionType.Parameter)
                 return true;
             else if (right.NodeType == ExpressionType.Constant)
@@ -171,6 +170,11 @@ namespace AssemblySharp
                 return false;
             var scale = (int)(exp.Right as ConstantExpression).Value;
             return new[] { 1, 2, 4, 8 }.Contains(scale);
+        }
+
+        public string ExpressionToString()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

@@ -8,17 +8,27 @@ namespace AssemblySharp
 {
     public class MEM
     {
-        public MEM Byte => throw new NotImplementedException();
-        public MEM Word => throw new NotImplementedException();
-        public MEM DWord => throw new NotImplementedException();
-        public MEM QWord => throw new NotImplementedException();
-        public MEM TByte => throw new NotImplementedException();
+        public MEM Byte => new MEM(_register, MemoryStructureType.Byte);
+        public MEM Word => new MEM(_register, MemoryStructureType.Word);
+        public MEM DWord => new MEM(_register, MemoryStructureType.DWord);
+        public MEM QWord => new MEM(_register, MemoryStructureType.QWord);
+        public MEM TByte => new MEM(_register, MemoryStructureType.TByte);
 
-        public MEM(REG reg)
+        protected REG _register;
+        protected MemoryStructureType _type;
+
+        public MEM(REG reg, MemoryStructureType type = MemoryStructureType.DWord)
         {
-            // if (!IsValidRegistry(reg)) throw new ArgumentException();
+            if (!IsValidRegistry(reg)) throw new ArgumentException();
+            _register = reg;
+            _type = type;
         }
 
         private static bool IsValidRegistry(REG reg) => reg.IsValidExpressionForMemory();
+
+        public override string ToString()
+        {
+            return $"{_type.ToString().ToLower()} ptr [{_register.ExpressionToString()}]";
+        }
     }
 }

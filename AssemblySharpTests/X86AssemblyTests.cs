@@ -82,11 +82,11 @@ namespace AssemblySharp.Tests
         {
             Assert.AreEqual("ret",
                 X86Assembly.FromInline(ASM.ret, new object[] { }));
-            Assert.AreEqual("mov EAX, 10",
+            Assert.AreEqual("mov eax, 10",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, 10 }));
-            Assert.AreEqual("mov EAX, [EBX+4]",
+            Assert.AreEqual("mov eax, [ebx+4]",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, (REG.EBX + 4).Ptr }));
-            Assert.AreEqual("mov WORD PTR [EBX], 2",
+            Assert.AreEqual("mov word ptr [ebx], 2",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EBX.Ptr.Word, 2 }));
         }
 
@@ -97,7 +97,7 @@ namespace AssemblySharp.Tests
             string code = "Nobody care this project";
             Assert.AreEqual(code, X86Assembly.FromInline(new object[]
             {
-                code
+                new RawAssemblyCode(code)
             }));
         }
 

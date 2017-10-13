@@ -44,6 +44,7 @@
     <Compile Include="InstructionPattern.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="MEM.cs" />
+    <Compile Include="MemoryStructureType.cs" />
     <Compile Include="PatternType.cs" />
     <Compile Include="RawAssemblyCode.cs" />
     <Compile Include="REG.cs" />
