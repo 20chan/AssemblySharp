@@ -11,6 +11,7 @@ namespace AssemblySharp.Tests
     [TestClass()]
     public class InstructionPatternTests
     {
+        [TestCategory("Pattern")]
         [TestMethod()]
         public void CheckPatternTest()
         {
@@ -29,6 +30,7 @@ namespace AssemblySharp.Tests
                 InstructionPattern.CheckPattern(new object[] { ASM.push, REG.EAX.Ptr }, 0));
         }
 
+        [TestCategory("Pattern")]
         [TestMethod()]
         public void CheckInvalidPatternTest()
         {

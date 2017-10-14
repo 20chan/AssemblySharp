@@ -8,6 +8,7 @@ namespace AssemblySharp.Tests
     [TestClass()]
     public class X86AssemblyTests
     {
+        [TestCategory("Execute")]
         [TestMethod()]
         public void ExecuteScriptTest()
         {
@@ -139,25 +140,66 @@ namespace AssemblySharp.Tests
             }));
         }
 
+        [TestCategory("Expression")]
         [TestMethod()]
-        public void ConvertInlineAssemblyErrorTest()
+        public void GetCodeTest()
         {
-            Assert.ThrowsException<FormatException>(() =>
-                X86Assembly.FromInline(ASM.mov, new object[] { ASM.mov }));
-            Assert.ThrowsException<FormatException>(() =>
-                X86Assembly.FromInline(ASM.mov, new object[] { ASM.mov }));
+            Assert.AreEqual(
+                $"mov eax, 100\nret\n",
+                  X86Assembly.GetCode(
+                      ASM.mov, REG.EAX, 100,
+                      ASM.ret));
+
+            Assert.AreEqual(
+                "mov eax, 100\nadd eax, 200\nret\n",
+                X86Assembly.GetCode(
+                    ASM.mov, REG.EAX, 100,
+                    ASM.add, REG.EAX, 200,
+                    ASM.ret));
+
+            Assert.AreEqual(
+                "push 42\npop eax\nret\n",
+                X86Assembly.GetCode(
+                    ASM.push, 42,
+                    ASM.pop, REG.EAX,
+                    ASM.ret));
+
+            Assert.AreEqual(
+                "mov eax, 0\nmov ecx, 100\nmyloop:\nadd eax, ecx\nloop myloop\nret\n",
+                X86Assembly.GetCode(
+                    ASM.mov, REG.EAX, 0,
+                    ASM.mov, REG.ECX, 100,
+                    new Label("myloop"),
+                        ASM.add, REG.EAX, REG.ECX,
+                    ASM.loop, "myloop",
+                    ASM.ret));
+
+
+            X86Assembly.GetCode(new object[]
+            {
+                ASM.push, REG.EBX,
+                ASM.mov, REG.EAX, 0,
+                new RawAssemblyCode("cpuid"),
+                ASM.mov, REG.EAX, (REG.ESP + 8).Ptr,
+                ASM.mov, (REG.EAX + 0).Ptr, REG.EBX,
+                ASM.mov, (REG.EAX + 4).Ptr, REG.EDX,
+                ASM.mov, (REG.EAX + 8).Ptr, REG.ECX,
+                ASM.pop, REG.EBX,
+                ASM.ret,
+            });
         }
 
+        [TestCategory("Compile")]
         [TestMethod()]
         public void CompileToMachineCodeTest()
         {
             Assert.Fail();
         }
 
-
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private unsafe delegate void CPUID0Delegate(byte* buffer);
 
+        [TestCategory("Execute")]
         [TestMethod()]
         public unsafe void RunMachineCodeTest()
         {

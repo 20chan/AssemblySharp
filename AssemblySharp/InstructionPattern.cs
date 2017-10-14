@@ -179,7 +179,7 @@ namespace AssemblySharp
 
             foreach (var pattern in PATTERNS[asm])
             {
-                if (pattern.Length != code.Length - current - 1) continue;
+                if (pattern.Length > code.Length - current) continue;
                 bool match = true;
                 for (int i = 0; i < pattern.Length; i++)
                 {

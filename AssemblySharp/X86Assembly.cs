@@ -17,6 +17,12 @@ namespace AssemblySharp
 
         public static object ExecuteScript(object[] code, Type delegateType, params dynamic[] parameters)
         {
+            var asmcode = GetCode(code);
+            return RunMachineCode(CompileToMachineCode(asmcode), delegateType, parameters);
+        }
+
+        public static string GetCode(params object[] code)
+        {
             string asmcode = "";
 
             for (int i = 0; i < code.Length; i++)
@@ -33,13 +39,14 @@ namespace AssemblySharp
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
                     throw new FormatException("Format error");
-                asmcode += FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt));
+                asmcode += $"{FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt))}\n";
+                i += cnt;
             }
 
-            return RunMachineCode(CompileToMachineCode(asmcode), delegateType, parameters);
+            return asmcode;
         }
 
-        public static string FromInline(object[] code)
+        public static string FromInline(params object[] code)
         {
             if (code[0] is ASM) return FromInline((ASM)code[0], code.Skip(1));
             if (code[0] is Label) return $"{(code[0] as Label).Name}:";
