@@ -76,7 +76,27 @@ namespace AssemblySharp.Tests
             }
         }
 
-        [TestCategory("ConvertInlineAssembly")]
+        [TestCategory("Expression")]
+        [TestMethod()]
+        public void IsValidExpressionForMemoryTest()
+        {
+            Assert.IsTrue(REG.EAX.IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + 4).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + REG.EBX).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + REG.EBX + 4).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + REG.EBX * 2).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + REG.EBX * 2 + 100).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX + REG.EBX * 1 + 1).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX * 8).IsValidExpressionForMemory());
+            Assert.IsTrue((REG.EAX * 8 + 100).IsValidExpressionForMemory());
+
+            Assert.IsFalse((REG.EAX + REG.EBX + REG.ECX).IsValidExpressionForMemory());
+            Assert.IsFalse((REG.EAX * 7).IsValidExpressionForMemory());
+            Assert.IsFalse((REG.EAX * 2 + REG.EBX * 2).IsValidExpressionForMemory());
+            Assert.IsFalse((REG.EAX + 4 + REG.EBX + 3).IsValidExpressionForMemory());
+        }
+
+        [TestCategory("Expression")]
         [TestMethod()]
         public void ConvertInlineAssemblyTest()
         {
@@ -84,13 +104,31 @@ namespace AssemblySharp.Tests
                 X86Assembly.FromInline(ASM.ret, new object[] { }));
             Assert.AreEqual("mov eax, 10",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, 10 }));
-            Assert.AreEqual("mov eax, [ebx+4]",
+            Assert.AreEqual("mov byte ptr [eax], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX.Ptr.Byte, 10 }));
+            Assert.AreEqual("mov word ptr [eax], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX.Ptr.Word, 10 }));
+            Assert.AreEqual("mov dword ptr [eax], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX.Ptr, 10 }));
+            Assert.AreEqual("mov dword ptr [eax], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX.Ptr.DWord, 10 }));
+            Assert.AreEqual("mov qword ptr [eax], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX.Ptr.QWord, 10 }));
+            Assert.AreEqual("mov dword ptr [eax+4], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { (REG.EAX + 4).Ptr, 10 }));
+            Assert.AreEqual("mov dword ptr [eax+ebx], 10",
+                X86Assembly.FromInline(ASM.mov, new object[] { (REG.EAX + REG.EBX).Ptr, 10 }));
+            Assert.AreEqual("mov dword ptr [eax+ebx*8+128], eax",
+                X86Assembly.FromInline(ASM.mov, new object[] { (REG.EAX + REG.EBX * 8 + 128).Ptr.DWord, REG.EAX }));
+            Assert.AreEqual("mov dword ptr [ebx*8+128], eax",
+                X86Assembly.FromInline(ASM.mov, new object[] { (REG.EBX * 8 + 128).Ptr.DWord, REG.EAX }));
+            Assert.AreEqual("mov dword ptr [ebx*2], eax",
+                X86Assembly.FromInline(ASM.mov, new object[] { (REG.EBX * 2).Ptr.DWord, REG.EAX }));
+            Assert.AreEqual("mov eax, dword ptr [ebx+4]",
                 X86Assembly.FromInline(ASM.mov, new object[] { REG.EAX, (REG.EBX + 4).Ptr }));
-            Assert.AreEqual("mov word ptr [ebx], 2",
-                X86Assembly.FromInline(ASM.mov, new object[] { REG.EBX.Ptr.Word, 2 }));
         }
 
-        [TestCategory("ConvertInlineAssembly")]
+        [TestCategory("Expression")]
         [TestMethod()]
         public void ConvertInlineAssemblyRawCodeTest()
         {

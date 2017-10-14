@@ -100,7 +100,7 @@ namespace AssemblySharp
         private REG(_reg type)
         {
             _type = type;
-            _exp = Expression.Parameter(GetRegisterType(type), type.ToString());
+            _exp = Expression.Parameter(GetRegisterType(type), type.ToString().ToLower());
         }
 
         private REG(Expression exp)
@@ -111,15 +111,19 @@ namespace AssemblySharp
         public bool IsValidExpressionForMemory()
             => IsValidExpressionForMemory(_exp);
 
+        public string ExpressionToString()
+            => ExpressionToString(_exp);
+
+        #region Expression
+
         public static bool IsValidExpressionForMemory(Expression exp)
         {
             if (exp.NodeType == ExpressionType.Parameter)
                 return true;
-            if (exp.NodeType == ExpressionType.Add)
+            else if (exp.NodeType == ExpressionType.Add)
             {
                 var bi = exp as BinaryExpression;
-                    if (bi.Left.NodeType != ExpressionType.Parameter) return false;
-                return CheckRootAddExpression(bi.Left as ParameterExpression, bi.Right);
+                return CheckRootAddExpression(bi.Left as Expression, bi.Right);
             }
             else if (exp.NodeType == ExpressionType.Multiply)
             {
@@ -129,35 +133,46 @@ namespace AssemblySharp
             else return false;
         }
 
-        private static bool CheckRootAddExpression(ParameterExpression left, Expression right)
+        private static bool CheckRootAddExpression(Expression left, Expression right)
         {
             /*
-             * One of next three states.
+             * One of next five states.
              * base (+) index
-             * base (+) index + displacement
-             * base (+) index * scale + displacement
+             * base (+) displacement
+             * base (+) index * scale
+             * base + index (+) displacement
+             * base + index * scale (+) displacement
+             * index * scale (+) displacement
              */
-            if (right.NodeType == ExpressionType.Parameter)
-                return true;
-            else if (right.NodeType == ExpressionType.Constant)
-                return true;
-            else if (right.NodeType == ExpressionType.Add)
+            if (left.NodeType == ExpressionType.Parameter)
             {
-                /*
-                 * base + index (+) displacement
-                 * base + index * scale (+) displacement
-                 */
-                var inner = right as BinaryExpression;
-                if (inner.Right.NodeType != ExpressionType.Constant) return false;
-                if (inner.Left.NodeType == ExpressionType.Parameter) return true;
-                if (inner.Left.NodeType == ExpressionType.Multiply)
-                    return CheckIndexScaleExpression(inner.Left as BinaryExpression);
-                return false;
+                if (right.NodeType == ExpressionType.Parameter)
+                    return true;
+                else if (right.NodeType == ExpressionType.Constant)
+                    return true;
+                else if (right.NodeType == ExpressionType.Multiply)
+                    return CheckIndexScaleExpression(right as BinaryExpression);
+                else return false;
             }
-            else if (right.NodeType == ExpressionType.Multiply)
+            else if (left.NodeType == ExpressionType.Add)
             {
-                // base + index (*) scale
-                return CheckIndexScaleExpression(right as BinaryExpression);
+                var inner = left as BinaryExpression;
+                /*
+                 * (base + index) + displacement
+                 * (base + index * scale) + displacement
+                 */
+                if (right.NodeType != ExpressionType.Constant) return false;
+                else if (inner.Left.NodeType != ExpressionType.Parameter) return false;
+                else if (inner.Right.NodeType == ExpressionType.Parameter) return true;
+                else if (inner.Right.NodeType == ExpressionType.Multiply)
+                    return CheckIndexScaleExpression(inner.Right as BinaryExpression);
+                else return false;
+            }
+            else if (left.NodeType == ExpressionType.Multiply)
+            {
+                if (right.NodeType == ExpressionType.Constant)
+                    return CheckIndexScaleExpression(left as BinaryExpression);
+                else return false;
             }
             else return false;
         }
@@ -172,10 +187,75 @@ namespace AssemblySharp
             return new[] { 1, 2, 4, 8 }.Contains(scale);
         }
 
-        public string ExpressionToString()
+        public static string ExpressionToString(Expression exp)
         {
-            throw new NotImplementedException();
+            if (exp.NodeType == ExpressionType.Parameter)
+                return (exp as ParameterExpression).Name;
+            else if (exp.NodeType == ExpressionType.Add)
+            {
+                var bi = exp as BinaryExpression;
+                return RootAddExpressionToString(bi.Left as Expression, bi.Right);
+            }
+            else if (exp.NodeType == ExpressionType.Multiply)
+            {
+                return IndexScaleExpressionToString(exp as BinaryExpression);
+            }
+            else throw new ArgumentException();
         }
+
+        private static string RootAddExpressionToString(Expression left, Expression right)
+        {
+            /* base (+) index
+             * base (+) displacement
+             * base (+) index * scale
+             * base + index (+) displacement
+             * base + index * scale (+) displacement
+             * index * scale (+) displacement
+             */
+            if (left.NodeType == ExpressionType.Parameter)
+            {
+                var lparam = left as ParameterExpression;
+                if (right.NodeType == ExpressionType.Parameter)
+                    // base (+) index
+                    return $"{lparam.Name}+{(right as ParameterExpression).Name}";
+                else if (right.NodeType == ExpressionType.Constant)
+                    // base (+) displacement
+                    return $"{lparam.Name}+{(right as ConstantExpression).Value}";
+                else if (right.NodeType == ExpressionType.Multiply)
+                    // base (+) index * scale
+                    return IndexScaleExpressionToString(right as BinaryExpression);
+                else throw new ArgumentException();
+            }
+            else if (left.NodeType == ExpressionType.Add)
+            {
+                var inner = left as BinaryExpression;
+                /*
+                 * (base + index) + displacement
+                 * (base + index * scale) + displacement
+                 */
+                var cons = right as ConstantExpression;
+                if (inner.Right.NodeType == ExpressionType.Add)
+                    return $"{(inner.Left as ParameterExpression).Name}+{(inner.Right as ParameterExpression).Name}+{cons.Value}";
+                else if (inner.Right.NodeType == ExpressionType.Multiply)
+                    return $"{(inner.Left as ParameterExpression).Name}+{IndexScaleExpressionToString(inner.Right as BinaryExpression)}+{cons.Value}";
+                else throw new ArgumentException();
+            }
+            else if (left.NodeType == ExpressionType.Multiply)
+            {
+                // index * scale (+) displacement
+                return $"{IndexScaleExpressionToString(left as BinaryExpression)}+{(right as ConstantExpression).Value}";
+            }
+            else throw new ArgumentException();
+        }
+
+        private static string IndexScaleExpressionToString(BinaryExpression exp)
+        {
+            var name = (exp.Left as ParameterExpression).Name;
+            var scale = (int)(exp.Right as ConstantExpression).Value;
+            return $"{name}*{scale}";
+        }
+
+        #endregion
 
         /// <summary>
         /// 포인터 안에 들어가는 연산의 큰 틀은 [base + index * scale + displacement]
@@ -191,7 +271,7 @@ namespace AssemblySharp
         public static REG operator +(REG left, int right)
         {
             var rExp = Expression.Constant(right, typeof(int));
-            return new REG(Expression.Multiply(left._exp, rExp));
+            return new REG(Expression.Add(left._exp, rExp));
         }
 
         public static REG operator *(REG left, int right)
@@ -202,7 +282,7 @@ namespace AssemblySharp
 
         public override string ToString()
         {
-            return _exp.ToString();
+            return _exp.ToString().ToLower();
         }
     }
 }
