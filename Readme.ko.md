@@ -27,6 +27,10 @@ result = X86Assembly.ExecuteScript(
 Console.WriteLine(result); // 5050
 ```
 
+## Requirements
+
+gcc, objdump 가 설치되어 있고 환경변수에 추가되있어야 합니다.
+
 ## [LICENSE](/LICENSE)
 
 The MIT License (MIT) Copyright (c) 2017 phillyai

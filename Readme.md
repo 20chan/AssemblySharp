@@ -27,6 +27,10 @@ result = X86Assembly.ExecuteScript(
 Console.WriteLine(result); // 5050
 ```
 
+## Requirements
+
+Should be installed gcc, objdump. You need to set your PATH environment variable to include directory of them.
+
 ## [LICENSE](/LICENSE)
 
 The MIT License (MIT) Copyright (c) 2017 phillyai
