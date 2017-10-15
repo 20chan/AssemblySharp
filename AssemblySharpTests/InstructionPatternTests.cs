@@ -40,9 +40,6 @@ namespace AssemblySharp.Tests
                 InstructionPattern.CheckPattern(new object[] { ASM.mov, ASM.mov }, 0));
             Assert.AreEqual(-1,
                 InstructionPattern.CheckPattern(new object[] { ASM.mov, 42, REG.EAX, }, 0));
-
-            Assert.AreEqual(-1,
-                InstructionPattern.CheckPattern(new object[] { ASM.push, 1, ASM.push, 1 }, 0));
         }
     }
 }

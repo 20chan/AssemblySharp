@@ -21,7 +21,8 @@ namespace AssemblySharp
             if (obj is REG) return PatternType.reg;
             if (obj is MEM) return PatternType.mem;
             if (obj is int) return PatternType.con;
-            if (obj is Label || obj is string) return PatternType.label;
+            if (obj is Label) return PatternType.label;
+            if (obj is string) return PatternType.label_string;
 
             return PatternType.NONE;
         }
@@ -179,7 +180,7 @@ namespace AssemblySharp
 
             foreach (var pattern in PATTERNS[asm])
             {
-                if (pattern.Length > code.Length - current) continue;
+                if (pattern.Length >= code.Length - current) continue;
                 bool match = true;
                 for (int i = 0; i < pattern.Length; i++)
                 {

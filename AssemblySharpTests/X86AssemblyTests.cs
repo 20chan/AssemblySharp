@@ -17,7 +17,7 @@ namespace AssemblySharp.Tests
                     ASM.mov, REG.EAX, 100,
                     ASM.ret));
 
-            Assert.AreEqual(200,
+            Assert.AreEqual(300,
                 X86Assembly.ExecuteScript(
                     ASM.mov, REG.EAX, 100,
                     ASM.add, REG.EAX, 200,
@@ -57,7 +57,7 @@ namespace AssemblySharp.Tests
                         X86Assembly.ExecuteScript(new object[]
                         {
                             ASM.push, REG.EBX,
-                            ASM.mov, REG.EAX, 0,
+                            ASM.xor, REG.EAX, REG.EAX,
                             new RawAssemblyCode("cpuid"),
                             ASM.mov, REG.EAX, (REG.ESP + 8).Ptr,
                             ASM.mov, (REG.EAX + 0).Ptr, REG.EBX,
@@ -175,10 +175,50 @@ namespace AssemblySharp.Tests
                     ASM.ret));
 
 
-            X86Assembly.GetCode(new object[]
+            Assert.AreEqual(
+                @"push ebx
+mov eax, 0
+cpuid
+mov eax, dword ptr [esp+8]
+mov dword ptr [eax+0], ebx
+mov dword ptr [eax+4], edx
+mov dword ptr [eax+8], ecx
+pop ebx
+ret
+".Replace("\r\n", "\n"),
+                X86Assembly.GetCode(new object[]
+                {
+                    ASM.push, REG.EBX,
+                    ASM.mov, REG.EAX, 0,
+                    new RawAssemblyCode("cpuid"),
+                    ASM.mov, REG.EAX, (REG.ESP + 8).Ptr,
+                    ASM.mov, (REG.EAX + 0).Ptr, REG.EBX,
+                    ASM.mov, (REG.EAX + 4).Ptr, REG.EDX,
+                    ASM.mov, (REG.EAX + 8).Ptr, REG.ECX,
+                    ASM.pop, REG.EBX,
+                    ASM.ret,
+                }));
+        }
+
+        [TestCategory("Compile")]
+        [TestMethod()]
+        public void CompileToMachineCodeTest()
+        {
+            CollectionAssert.AreEqual(new byte[]
             {
+                0x53,
+                0x31, 0xc0,
+                0x0f, 0xa2,
+                0x8b, 0x44, 0x24, 0x08,
+                0x89, 0x18,
+                0x89, 0x50, 0x04,
+                0x89, 0x48, 0x08,
+                0x5b,
+                0xc3
+            },
+            X86Assembly.CompileToMachineCode(new object[]{
                 ASM.push, REG.EBX,
-                ASM.mov, REG.EAX, 0,
+                ASM.xor, REG.EAX, REG.EAX,
                 new RawAssemblyCode("cpuid"),
                 ASM.mov, REG.EAX, (REG.ESP + 8).Ptr,
                 ASM.mov, (REG.EAX + 0).Ptr, REG.EBX,
@@ -186,14 +226,7 @@ namespace AssemblySharp.Tests
                 ASM.mov, (REG.EAX + 8).Ptr, REG.ECX,
                 ASM.pop, REG.EBX,
                 ASM.ret,
-            });
-        }
-
-        [TestCategory("Compile")]
-        [TestMethod()]
-        public void CompileToMachineCodeTest()
-        {
-            Assert.Fail();
+            }));
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

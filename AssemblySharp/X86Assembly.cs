@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
@@ -17,8 +20,7 @@ namespace AssemblySharp
 
         public static object ExecuteScript(object[] code, Type delegateType, params dynamic[] parameters)
         {
-            var asmcode = GetCode(code);
-            return RunMachineCode(CompileToMachineCode(asmcode), delegateType, parameters);
+            return RunMachineCode(CompileToMachineCode(code), delegateType, parameters);
         }
 
         public static string GetCode(params object[] code)
@@ -39,7 +41,7 @@ namespace AssemblySharp
                 var cnt = InstructionPattern.CheckPattern(code, i);
                 if (cnt < 0)
                     throw new FormatException("Format error");
-                asmcode += $"{FromInline((ASM)code[i], code.Skip(i + 1).Take(cnt))}\n";
+                asmcode += $"{FromInline(code.Skip(i).Take(cnt + 1).ToArray())}\n";
                 i += cnt;
             }
 
@@ -60,10 +62,50 @@ namespace AssemblySharp
             return parameters.Count() == 0 ? inst.ToString() : $"{inst} {string.Join(", ", parameters)}";
         }
 
+        public static byte[] CompileToMachineCode(object[] code)
+            => CompileToMachineCode(GetCode(code));
+
         public static byte[] CompileToMachineCode(string asmcode)
         {
-            // objdump를 사용하는 게 괜찮을 거 같은데...
-            throw new NotImplementedException();
+            var fullcode = $".intel_syntax noprefix\n_main:\n{asmcode}";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "temp");
+            var asmfile = $"{path}.s";
+            var objfile = $"{path}.o";
+            File.WriteAllText(asmfile, fullcode, new UTF8Encoding(false));
+            var psi = new ProcessStartInfo("gcc", $"-m32 -c {asmfile} -o {objfile}")
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            var gcc = Process.Start(psi);
+            gcc.WaitForExit();
+            if (gcc.ExitCode == 0)
+            {
+                psi.FileName = "objdump";
+                psi.Arguments = $"-z -M intel -d {objfile}";
+                var objdump = Process.Start(psi);
+                objdump.WaitForExit();
+                if (objdump.ExitCode == 0)
+                {
+                    var output = objdump.StandardOutput.ReadToEnd();
+                    var matches = Regex.Matches(output, @"\b[a-fA-F0-9]{2}(?!.*:)\b");
+                    var result = new List<byte>();
+                    foreach (Match match in matches)
+                    {
+                        result.Add((byte)Convert.ToInt32(match.Value, 16));
+                    }
+
+                    return result.TakeWhile(b => b != 0x90).ToArray();
+                }
+            }
+            else
+            {
+                var err = gcc.StandardError.ReadToEnd();
+            }
+
+            throw new ArgumentException();
         }
 
         public static int RunMachineCode(byte[] bytecode)
