@@ -44,7 +44,6 @@
     <Compile Include="InstructionPattern.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Machine\DynamicInvoke.cs" />
-    <Compile Include="Machine\Emulator.cs" />
     <Compile Include="Machine\VM.cs" />
     <Compile Include="MEM.cs" />
     <Compile Include="MemoryStructureType.cs" />

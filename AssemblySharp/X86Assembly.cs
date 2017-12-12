@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using AssemblySharp.Machine;
 
 namespace AssemblySharp
 {
@@ -50,11 +51,17 @@ namespace AssemblySharp
 
         public static string FromInline(params object[] code)
         {
-            if (code[0] is ASM) return FromInline((ASM)code[0], code.Skip(1));
-            if (code[0] is Label) return $"{(code[0] as Label).Name}:";
-            if (code[0] is RawAssemblyCode) return (code[0] as RawAssemblyCode).Code;
-
-            throw new Exception();
+            switch(code[0])
+            {
+                case ASM asm:
+                    return FromInline(asm, code.Skip(1));
+                case Label label:
+                    return $"{label.Name}:";
+                case RawAssemblyCode raw:
+                    return raw.Code;
+                default:
+                    throw new Exception("Unexpected Type");
+            }
         }
 
         public static string FromInline(ASM inst, IEnumerable<object> parameters)
@@ -113,17 +120,7 @@ namespace AssemblySharp
 
         public static object RunMachineCode(byte[] bytecode, Type delegateType, params dynamic[] parameters)
         {
-            var func = CompileMachineCode(bytecode, out var buf, delegateType);
-            var res = func.DynamicInvoke(parameters);
-            WinAPI.VirtualFree(buf, bytecode.Length, WinAPI.FreeType.Release);
-            return res;
-        }
-
-        public static Delegate CompileMachineCode(byte[] bytecode, out IntPtr buffer, Type delegateType = null)
-        {
-            buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)bytecode.Length, WinAPI.AllocationType.Commit | WinAPI.AllocationType.Reserve, WinAPI.MemoryProtection.ExecuteReadWrite);
-            Marshal.Copy(bytecode, 0, buffer, bytecode.Length);
-            return Marshal.GetDelegateForFunctionPointer(buffer, delegateType ?? typeof(IntDelegate));
+            return DynamicInvoke.ExecuteMethod(bytecode, delegateType, parameters);
         }
     }
 }
