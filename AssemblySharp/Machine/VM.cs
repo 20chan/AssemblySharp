@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace AssemblySharp.Machine
 {
     /// <summary>
     /// X86 Virtual Machine
     /// </summary>
-    public class VM
+    public partial class VM
     {
         #region Registers
         public class RegisterManager
@@ -49,8 +51,7 @@ namespace AssemblySharp.Machine
         private Register EAX, EBX, ECX, EDX;
         private Register ESI, EDI, ESP, EBP, EIP;
         #endregion
-
-
+        
         #region Segments
         public class SegmentManager
         {
@@ -69,11 +70,36 @@ namespace AssemblySharp.Machine
         public SegmentManager Segments { get; private set; }
         private Flags flag;
         #endregion
+
+        #region Instructions
+        // 일단은 임시방편으로 인자를 받지 않는 콜백만 만들었다..
+        public delegate void InstructionCallback();
+        public class InstructionManager
+        {
+            private VM _vm;
+
+            public readonly InstructionCallback NOP;
+
+            public InstructionManager(VM vm)
+            {
+                _vm = vm;
+
+                NOP = GetCallback(InstructionType.Nop);
+            }
+
+            private InstructionCallback GetCallback(InstructionType type)
+                => throw new NotImplementedException();
+        }
+        private Dictionary<uint, InstructionCallback> _instructions;
+        #endregion
+
         public VM()
         {
             Registers = new RegisterManager(this);
             Segments = new SegmentManager(this);
+            _instructions = new Dictionary<uint, InstructionCallback>();
             Reset();
+            LoadInstructions();
         }
 
         public void Reset()
@@ -89,6 +115,18 @@ namespace AssemblySharp.Machine
             EIP = 0;
 
             flag = 0;
+        }
+
+        private void LoadInstructions()
+        {
+            foreach (MethodInfo method in (typeof(VM)).GetMethods())
+            {
+                foreach(var inst in method.GetCustomAttributes<Instruction>())
+                {
+                    var del = (InstructionCallback)Delegate.CreateDelegate(typeof(InstructionCallback), this, method);
+                    _instructions.Add(inst.OpCode, del);
+                }
+            }
         }
 
         public object ExecuteFunction(byte[] codes, Type funcType, params object[] parameters)

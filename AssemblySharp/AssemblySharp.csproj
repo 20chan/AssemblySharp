@@ -45,6 +45,8 @@
     <Compile Include="Label.cs" />
     <Compile Include="Machine\DynamicInvoke.cs" />
     <Compile Include="Machine\Flag.cs" />
+    <Compile Include="Machine\Instruction.cs" />
+    <Compile Include="Machine\Instructions.cs" />
     <Compile Include="Machine\Register.cs" />
     <Compile Include="Machine\VM.cs" />
     <Compile Include="MEM.cs" />
