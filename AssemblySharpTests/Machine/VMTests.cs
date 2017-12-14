@@ -12,21 +12,17 @@ namespace AssemblySharp.Machine.Tests
     public class VMTests
     {
         [TestMethod()]
-        public unsafe void VMTest()
+        public void InstructionsLoadTest()
         {
-
-        }
-
-        [TestMethod()]
-        public void ExecuteFunctionTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void ExecuteCodeTest()
-        {
-            Assert.Fail();
+            try
+            {
+                var vm = new VM();
+                vm.Instructions.NOP();
+            }
+            catch(KeyNotFoundException)
+            {
+                Assert.Fail("NOP 명령어가 로드되지 않음");
+            }
         }
     }
 }

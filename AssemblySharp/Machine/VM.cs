@@ -90,6 +90,7 @@ namespace AssemblySharp.Machine
             private InstructionCallback GetCallback(InstructionType type)
                 => throw new NotImplementedException();
         }
+        public InstructionManager Instructions { get; private set; }
         private Dictionary<uint, InstructionCallback> _instructions;
         #endregion
 
@@ -97,6 +98,7 @@ namespace AssemblySharp.Machine
         {
             Registers = new RegisterManager(this);
             Segments = new SegmentManager(this);
+            Instructions = new InstructionManager(this);
             _instructions = new Dictionary<uint, InstructionCallback>();
             Reset();
             LoadInstructions();
