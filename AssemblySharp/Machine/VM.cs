@@ -57,18 +57,34 @@ namespace AssemblySharp.Machine
         {
             private VM _vm;
 
+            public bool CF => HasFlag(Flags.CF);
+            public bool PF => HasFlag(Flags.PF);
+            public bool AF => HasFlag(Flags.AF);
             public bool ZF => HasFlag(Flags.ZF);
             public bool SF => HasFlag(Flags.SF);
+            public bool TF => HasFlag(Flags.TF);
+            public bool IF => HasFlag(Flags.IF);
+            public bool DF => HasFlag(Flags.DF);
+            public bool OF => HasFlag(Flags.OF);
+            public bool IOPL => HasFlag(Flags.IOPL);
+            public bool IOPL2 => HasFlag(Flags.IOPL2);
+            public bool NT => HasFlag(Flags.NT);
+            public bool RF => HasFlag(Flags.RF);
+            public bool VM => HasFlag(Flags.VM);
+            public bool AC => HasFlag(Flags.AC);
+            public bool VIF => HasFlag(Flags.VIF);
+            public bool VIP => HasFlag(Flags.VIP);
+            public bool ID => HasFlag(Flags.ID);
 
             public SegmentManager(VM vm)
             {
                 _vm = vm;
             }
 
-            private bool HasFlag(Flags flag) => (_vm.flag & flag) == flag;
+            private bool HasFlag(Flags flag) => (_vm.eflag & flag) == flag;
         }
         public SegmentManager Segments { get; private set; }
-        private Flags flag;
+        private Flags eflag;
         #endregion
 
         #region Instructions
@@ -116,7 +132,7 @@ namespace AssemblySharp.Machine
             EBP = 0;
             EIP = 0;
 
-            flag = 0;
+            eflag = 0;
         }
 
         private void LoadInstructions()
