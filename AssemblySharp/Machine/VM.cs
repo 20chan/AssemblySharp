@@ -57,34 +57,32 @@ namespace AssemblySharp.Machine
         {
             private VM _vm;
 
-            public bool CF => HasFlag(Flags.CF);
-            public bool PF => HasFlag(Flags.PF);
-            public bool AF => HasFlag(Flags.AF);
-            public bool ZF => HasFlag(Flags.ZF);
-            public bool SF => HasFlag(Flags.SF);
-            public bool TF => HasFlag(Flags.TF);
-            public bool IF => HasFlag(Flags.IF);
-            public bool DF => HasFlag(Flags.DF);
-            public bool OF => HasFlag(Flags.OF);
-            public bool IOPL => HasFlag(Flags.IOPL);
-            public bool IOPL2 => HasFlag(Flags.IOPL2);
-            public bool NT => HasFlag(Flags.NT);
-            public bool RF => HasFlag(Flags.RF);
-            public bool VM => HasFlag(Flags.VM);
-            public bool AC => HasFlag(Flags.AC);
-            public bool VIF => HasFlag(Flags.VIF);
-            public bool VIP => HasFlag(Flags.VIP);
-            public bool ID => HasFlag(Flags.ID);
+            public bool CF => _vm.eflag.CF;
+            public bool PF => _vm.eflag.PF;
+            public bool AF => _vm.eflag.AF;
+            public bool ZF => _vm.eflag.ZF;
+            public bool SF => _vm.eflag.SF;
+            public bool TF => _vm.eflag.TF;
+            public bool IF => _vm.eflag.IF;
+            public bool DF => _vm.eflag.DF;
+            public bool OF => _vm.eflag.OF;
+            public bool IOPL => _vm.eflag.IOPL;
+            public bool IOPL2 => _vm.eflag.IOPL2;
+            public bool NT => _vm.eflag.NT;
+            public bool RF => _vm.eflag.RF;
+            public bool VM => _vm.eflag.VM;
+            public bool AC => _vm.eflag.AC;
+            public bool VIF => _vm.eflag.VIF;
+            public bool VIP => _vm.eflag.VIP;
+            public bool ID => _vm.eflag.ID;
 
             public SegmentManager(VM vm)
             {
                 _vm = vm;
             }
-
-            private bool HasFlag(Flags flag) => (_vm.eflag & flag) == flag;
         }
         public SegmentManager Segments { get; private set; }
-        private Flags eflag;
+        private EFlags eflag;
         #endregion
 
         #region Instructions

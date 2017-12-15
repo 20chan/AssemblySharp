@@ -1,84 +1,110 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
 
 namespace AssemblySharp.Machine
 {
-    [Flags]
-    public enum Flags : uint
+    [StructLayout(LayoutKind.Explicit, Size = 4)]
+    public struct EFlags
     {
+        [FieldOffset(0)]
+        private uint Value;
         #region Status Flags
         /// <summary>
         /// Carry flag
         /// </summary>
-        CF = 1 << 0,
+        [FieldOffset(0)]
+        public bool CF;
         /// <summary>
         /// Parity flag
         /// </summary>
-        PF = 1 << 2,
+        [FieldOffset(2)]
+        public bool PF;
         /// <summary>
         /// Auxiliary Carry flag
         /// </summary>
-        AF = 1 << 4,
+        [FieldOffset(4)]
+        public bool AF;
         /// <summary>
         /// Zero flag
         /// </summary>
-        ZF = 1 << 6,
+        [FieldOffset(6)]
+        public bool ZF;
         /// <summary>
         /// Sign flag
         /// </summary>
-        SF = 1 << 7,
+        [FieldOffset(7)]
+        public bool SF;
         /// <summary>
         /// Overflow flag
         /// </summary>
-        OF = 1 << 11,
+        [FieldOffset(11)]
+        public bool OF;
         #endregion
 
         /// <summary>
         /// Direction flag
         /// </summary>
-        DF = 1 << 10,
+        [FieldOffset(10)]
+        public bool DF;
 
         #region System Flags and IOPL
         /// <summary>
         /// Trap flag
         /// </summary>
-        TF = 1 << 8,
+        [FieldOffset(8)]
+        public bool TF;
         /// <summary>
         /// Interrupt enable flag
         /// </summary>
-        IF = 1 << 9,
+        [FieldOffset(9)]
+        public bool IF;
         /// <summary>
         /// I/O previlege level field
         /// </summary>
-        IOPL = 1 << 12,
-        IOPL2 = 1 << 13,
+        [FieldOffset(12)]
+        public bool IOPL;
+        [FieldOffset(13)]
+        public bool IOPL2;
         /// <summary>
         /// Nested task flag
         /// </summary>
-        NT = 1 << 14,
+        [FieldOffset(14)]
+        public bool NT;
         /// <summary>
         /// Resume flag
         /// </summary>
-        RF = 1 << 16,
+        [FieldOffset(16)]
+        public bool RF;
         /// <summary>
         /// Virtual-8086 mode flag
         /// </summary>
-        VM = 1 << 17,
+        [FieldOffset(17)]
+        public bool VM;
         /// <summary>
         /// Alignment check (or access check control) flag
         /// </summary>
-        AC = 1 << 18,
+        [FieldOffset(18)]
+        public bool AC;
         /// <summary>
         /// Virtual interrupt flag
         /// </summary>
-        VIF = 1 << 19,
+        [FieldOffset(19)]
+        public bool VIF;
         /// <summary>
         /// Virtual interrupt pending flag
         /// </summary>
-        VIP = 1 << 20,
+        [FieldOffset(20)]
+        public bool VIP;
         /// <summary>
         /// Identification flag
         /// </summary>
-        ID = 1 << 21,
+        [FieldOffset(21)]
+        public bool ID;
         #endregion
+
+        public static implicit operator uint(EFlags register)
+            => register.Value;
+
+        public static implicit operator EFlags(uint value)
+            => new EFlags() { Value = value };
     }
 }
