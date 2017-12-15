@@ -29,7 +29,11 @@ Console.WriteLine(result); // 5050
 
 ## Requirements
 
-Should be installed gcc, objdump. You need to set your PATH environment variable to include directory of them.
+Should be installed gcc, objdump. You ㅍneed to set your PATH environment variable to include directory of them.
+
+## AssemblySharp.VM
+
+X86 VM
 
 ## [LICENSE](/LICENSE)
 
