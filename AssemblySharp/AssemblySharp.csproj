@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AssemblySharp</RootNamespace>
     <AssemblyName>AssemblySharp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +34,16 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.4.0-preview1-25305-02\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0-preview1-25305-02\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.4.0-preview1-25305-02\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,7 +58,20 @@
     <Compile Include="Machine\DynamicInvoke.cs" />
     <Compile Include="Machine\EFlags.cs" />
     <Compile Include="Machine\Instruction.cs" />
-    <Compile Include="Machine\Instructions.cs" />
+    <Compile Include="Machine\InstructionType.cs" />
+    <Compile Include="Machine\Instructions\BinaryArithmetic.cs" />
+    <Compile Include="Machine\Instructions\BitAndByte.cs" />
+    <Compile Include="Machine\Instructions\ControlTransfer.cs" />
+    <Compile Include="Machine\Instructions\DataTransfer.cs" />
+    <Compile Include="Machine\Instructions\DecimalArithmetic.cs" />
+    <Compile Include="Machine\Instructions\EnterLeave.cs" />
+    <Compile Include="Machine\Instructions\FlagControl.cs" />
+    <Compile Include="Machine\Instructions\IO.cs" />
+    <Compile Include="Machine\Instructions\Logical.cs" />
+    <Compile Include="Machine\Instructions\Misc.cs" />
+    <Compile Include="Machine\Instructions\SegmentRegister.cs" />
+    <Compile Include="Machine\Instructions\ShiftAndRotate.cs" />
+    <Compile Include="Machine\Instructions\String.cs" />
     <Compile Include="Machine\Register.cs" />
     <Compile Include="Machine\VM.cs" />
     <Compile Include="MEM.cs" />
@@ -57,6 +82,9 @@
     <Compile Include="WinAPI.cs" />
     <Compile Include="X86Assembly.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

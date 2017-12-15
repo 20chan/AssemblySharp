@@ -12,39 +12,39 @@ namespace AssemblySharp.Machine
         #region Registers
         public class RegisterManager
         {
-            private VM vm;
-            public uint EAX => vm.EAX;
-            public uint EBX => vm.EBX;
-            public uint ECX => vm.ECX;
-            public uint EDX => vm.EDX;
-            public uint ESP => vm.ESP;
-            public uint EBP => vm.EBP;
-            public uint ESI => vm.ESI;
-            public uint EDI => vm.EDI;
-            public uint EIP => vm.EIP;
+            private VM _vm;
+            public uint EAX => _vm.EAX;
+            public uint EBX => _vm.EBX;
+            public uint ECX => _vm.ECX;
+            public uint EDX => _vm.EDX;
+            public uint ESP => _vm.ESP;
+            public uint EBP => _vm.EBP;
+            public uint ESI => _vm.ESI;
+            public uint EDI => _vm.EDI;
+            public uint EIP => _vm.EIP;
 
-            public ushort AX => vm.EAX.LowWord;
-            public ushort BX => vm.EBX.LowWord;
-            public ushort CX => vm.ECX.LowWord;
-            public ushort DX => vm.EDX.LowWord;
-            public ushort SP => vm.ESP.LowWord;
-            public ushort BP => vm.EBP.LowWord;
-            public ushort SI => vm.ESI.LowWord;
-            public ushort DI => vm.EDI.LowWord;
-            public ushort IP => vm.EIP.LowWord;
+            public ushort AX => _vm.EAX.LowWord;
+            public ushort BX => _vm.EBX.LowWord;
+            public ushort CX => _vm.ECX.LowWord;
+            public ushort DX => _vm.EDX.LowWord;
+            public ushort SP => _vm.ESP.LowWord;
+            public ushort BP => _vm.EBP.LowWord;
+            public ushort SI => _vm.ESI.LowWord;
+            public ushort DI => _vm.EDI.LowWord;
+            public ushort IP => _vm.EIP.LowWord;
 
-            public byte AH => vm.EAX.HighByte;
-            public byte AL => vm.EAX.LowByte;
-            public byte BH => vm.EBX.HighByte;
-            public byte BL => vm.EBX.LowByte;
-            public byte CH => vm.ECX.HighByte;
-            public byte CL => vm.ECX.LowByte;
-            public byte DH => vm.EDX.HighByte;
-            public byte DL => vm.EDX.LowByte;
+            public byte AH => _vm.EAX.HighByte;
+            public byte AL => _vm.EAX.LowByte;
+            public byte BH => _vm.EBX.HighByte;
+            public byte BL => _vm.EBX.LowByte;
+            public byte CH => _vm.ECX.HighByte;
+            public byte CL => _vm.ECX.LowByte;
+            public byte DH => _vm.EDX.HighByte;
+            public byte DL => _vm.EDX.LowByte;
 
             public RegisterManager(VM vm)
             {
-                this.vm = vm;
+                this._vm = vm;
             }
         }
         public RegisterManager Registers { get; private set; }
@@ -108,6 +108,11 @@ namespace AssemblySharp.Machine
         private Dictionary<uint, InstructionCallback> _instructions;
         #endregion
 
+        #region Memory
+        readonly int STACK_SIZE = 1024;
+        Span<byte> _memory;
+        #endregion
+
         public VM()
         {
             Registers = new RegisterManager(this);
@@ -131,6 +136,7 @@ namespace AssemblySharp.Machine
             EIP = 0;
 
             eflag = 0;
+            _memory = new byte[STACK_SIZE * 1024].AsSpan();
         }
 
         private void LoadInstructions()
