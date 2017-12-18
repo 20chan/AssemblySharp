@@ -5,9 +5,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using AssemblySharp.Machine;
 
 namespace AssemblySharp
 {
@@ -117,10 +115,21 @@ namespace AssemblySharp
 
         public static int RunMachineCode(byte[] bytecode)
             => (int)RunMachineCode(bytecode, typeof(IntDelegate));
-
-        public static object RunMachineCode(byte[] bytecode, Type delegateType, params dynamic[] parameters)
+        
+        public static object RunMachineCode(byte[] codes, Type delegateType, params dynamic[] parameters)
         {
-            return DynamicInvoke.ExecuteMethod(bytecode, delegateType, parameters);
+            var func = CompileMachineCode(codes, out var buf, delegateType);
+            var res = func.DynamicInvoke(parameters);
+            WinAPI.VirtualFree(buf, codes.Length, WinAPI.FreeType.Release);
+            return res;
         }
+
+        public static Delegate CompileMachineCode(byte[] codes, out IntPtr buffer, Type delegateType = null)
+        {
+            buffer = WinAPI.VirtualAlloc(IntPtr.Zero, (uint)codes.Length, WinAPI.AllocationType.Commit | WinAPI.AllocationType.Reserve, WinAPI.MemoryProtection.ExecuteReadWrite);
+            Marshal.Copy(codes, 0, buffer, codes.Length);
+            return Marshal.GetDelegateForFunctionPointer(buffer, delegateType ?? typeof(IntDelegate));
+        }
+
     }
 }

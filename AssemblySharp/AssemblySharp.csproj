@@ -42,7 +42,7 @@
       <HintPath>..\packages\System.Numerics.Vectors.4.4.0-preview1-25305-02\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.4.0-preview1-25305-02\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.4.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,26 +55,6 @@
     <Compile Include="ASM.cs" />
     <Compile Include="InstructionPattern.cs" />
     <Compile Include="Label.cs" />
-    <Compile Include="Machine\DynamicInvoke.cs" />
-    <Compile Include="Machine\EFlags.cs" />
-    <Compile Include="Machine\Instruction.cs" />
-    <Compile Include="Machine\InstructionType.cs" />
-    <Compile Include="Machine\Instructions\BinaryArithmetic.cs" />
-    <Compile Include="Machine\Instructions\BitAndByte.cs" />
-    <Compile Include="Machine\Instructions\ControlTransfer.cs" />
-    <Compile Include="Machine\Instructions\DataTransfer.cs" />
-    <Compile Include="Machine\Instructions\DecimalArithmetic.cs" />
-    <Compile Include="Machine\Instructions\EnterLeave.cs" />
-    <Compile Include="Machine\Instructions\FlagControl.cs" />
-    <Compile Include="Machine\Instructions\IO.cs" />
-    <Compile Include="Machine\Instructions\Logical.cs" />
-    <Compile Include="Machine\Instructions\Misc.cs" />
-    <Compile Include="Machine\Instructions\SegmentRegister.cs" />
-    <Compile Include="Machine\Instructions\ShiftAndRotate.cs" />
-    <Compile Include="Machine\Instructions\String.cs" />
-    <Compile Include="Machine\Operand.cs" />
-    <Compile Include="Machine\Register.cs" />
-    <Compile Include="Machine\VM.cs" />
     <Compile Include="MEM.cs" />
     <Compile Include="MemoryStructureType.cs" />
     <Compile Include="PatternType.cs" />
