@@ -6,20 +6,20 @@ namespace AssemblySharp.Machine
     public struct Register
     {
         [FieldOffset(0)]
-        public uint DWord;
+        public dwordop DWord;
         [FieldOffset(0)]
-        public ushort HighWord;
+        public wordop HighWord;
         [FieldOffset(2)]
-        public ushort LowWord;
+        public wordop LowWord;
         [FieldOffset(2)]
-        public byte HighByte;
+        public byteop HighByte;
         [FieldOffset(3)]
-        public byte LowByte;
+        public byteop LowByte;
 
-        public static implicit operator uint(Register register)
+        public static implicit operator dwordop(Register register)
             => register.DWord;
 
-        public static implicit operator Register(uint value)
+        public static implicit operator Register(dwordop value)
             => new Register() { DWord = value };
     }
 }

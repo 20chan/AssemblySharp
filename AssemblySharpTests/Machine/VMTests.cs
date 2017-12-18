@@ -17,7 +17,7 @@ namespace AssemblySharp.Machine.Tests
             try
             {
                 var vm = new VM();
-                vm.Instructions.NOP();
+                vm.Instructions.GetInstructionFromType<InstructionCallback0args>(InstructionType.Nop)();
             }
             catch(KeyNotFoundException)
             {

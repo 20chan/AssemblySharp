@@ -1,4 +1,4 @@
-﻿namespace AssemblySharp.Machine.Instructions
+﻿namespace AssemblySharp.Machine
 {
     public partial class VM
     {
