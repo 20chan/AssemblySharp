@@ -5,6 +5,7 @@
 
 Implementation of  C/C++ `__asm` or ` __asm__` keywords as closely as possible in C#.
 We use standard Intel syntax used in Microsoft Micro Assembler (MASM) assembler.
+Works on .Net framework 4.7
 
 ## Usage
 
@@ -31,9 +32,9 @@ Console.WriteLine(result); // 5050
 
 Should be installed gcc, objdump. You ㅍneed to set your PATH environment variable to include directory of them.
 
-## AssemblySharp.VM
+## [X86Sharp](https://github.com/phillyai/X86Sharp)
 
-X86 VM
+X86 VM developed in this project but moved to .Net Core 2.0
 
 ## [LICENSE](/LICENSE)
 
