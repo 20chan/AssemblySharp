@@ -13,34 +13,34 @@ namespace AssemblySharp.Machine
         public class RegisterManager
         {
             private VM _vm;
-            public dwordop EAX => _vm.EAX;
-            public dwordop EBX => _vm.EBX;
-            public dwordop ECX => _vm.ECX;
-            public dwordop EDX => _vm.EDX;
-            public dwordop ESP => _vm.ESP;
-            public dwordop EBP => _vm.EBP;
-            public dwordop ESI => _vm.ESI;
-            public dwordop EDI => _vm.EDI;
-            public dwordop EIP => _vm.EIP;
+            public ref dwordop EAX => ref _vm.EAX.DWord;
+            public ref dwordop EBX => ref _vm.EBX.DWord;
+            public ref dwordop ECX => ref _vm.ECX.DWord;
+            public ref dwordop EDX => ref _vm.EDX.DWord;
+            public ref dwordop ESP => ref _vm.ESP.DWord;
+            public ref dwordop EBP => ref _vm.EBP.DWord;
+            public ref dwordop ESI => ref _vm.ESI.DWord;
+            public ref dwordop EDI => ref _vm.EDI.DWord;
+            public ref dwordop EIP => ref _vm.EIP.DWord;
 
-            public wordop AX => _vm.EAX.LowWord;
-            public wordop BX => _vm.EBX.LowWord;
-            public wordop CX => _vm.ECX.LowWord;
-            public wordop DX => _vm.EDX.LowWord;
-            public wordop SP => _vm.ESP.LowWord;
-            public wordop BP => _vm.EBP.LowWord;
-            public wordop SI => _vm.ESI.LowWord;
-            public wordop DI => _vm.EDI.LowWord;
-            public wordop IP => _vm.EIP.LowWord;
+            public ref wordop AX => ref _vm.EAX.LowWord;
+            public ref wordop BX => ref _vm.EBX.LowWord;
+            public ref wordop CX => ref _vm.ECX.LowWord;
+            public ref wordop DX => ref _vm.EDX.LowWord;
+            public ref wordop SP => ref _vm.ESP.LowWord;
+            public ref wordop BP => ref _vm.EBP.LowWord;
+            public ref wordop SI => ref _vm.ESI.LowWord;
+            public ref wordop DI => ref _vm.EDI.LowWord;
+            public ref wordop IP => ref _vm.EIP.LowWord;
 
-            public byteop AH => _vm.EAX.HighByte;
-            public byteop AL => _vm.EAX.LowByte;
-            public byteop BH => _vm.EBX.HighByte;
-            public byteop BL => _vm.EBX.LowByte;
-            public byteop CH => _vm.ECX.HighByte;
-            public byteop CL => _vm.ECX.LowByte;
-            public byteop DH => _vm.EDX.HighByte;
-            public byteop DL => _vm.EDX.LowByte;
+            public ref byteop AH => ref _vm.EAX.HighByte;
+            public ref byteop AL => ref _vm.EAX.LowByte;
+            public ref byteop BH => ref _vm.EBX.HighByte;
+            public ref byteop BL => ref _vm.EBX.LowByte;
+            public ref byteop CH => ref _vm.ECX.HighByte;
+            public ref byteop CL => ref _vm.ECX.LowByte;
+            public ref byteop DH => ref _vm.EDX.HighByte;
+            public ref byteop DL => ref _vm.EDX.LowByte;
 
             public RegisterManager(VM vm)
             {
