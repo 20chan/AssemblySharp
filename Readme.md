@@ -4,8 +4,9 @@
 - [한국어](Readme.ko.md)
 
 Implementation of  C/C++ `__asm` or ` __asm__` keywords as closely as possible in C#.
-We use standard Intel syntax used in Microsoft Micro Assembler (MASM) assembler.
-Works on .Net framework 4.7
+Standard Intel syntax used in Microsoft Micro Assembler (MASM) assembler is supported.
+
+Works on .Net core 2.1
 
 ## Usage
 
@@ -16,7 +17,10 @@ int result = (int)X86Assembly.ExecuteScript(
     ASM.ADD, REG.EAX, a,
     ASM.RET);
 Console.WriteLine(result); // 300
+```
 
+
+```csharp
 int i = 100;
 result = X86Assembly.ExecuteScript(
     ASM.mov, REG.EAX, 0,
@@ -30,12 +34,10 @@ Console.WriteLine(result); // 5050
 
 ## Requirements
 
-Should be installed gcc, objdump. You ㅍneed to set your PATH environment variable to include directory of them.
+Should be installed gcc, objdump. You need to set your PATH environment variable to include directory of them.
 
-## [X86Sharp](https://github.com/phillyai/X86Sharp)
-
-X86 VM developed in this project but moved to .Net Core 2.0
 
 ## [LICENSE](/LICENSE)
 
-The MIT License (MIT) Copyright (c) 2017 phillyai
+The MIT License (MIT) Copyright (c) 2019 20chan
+
