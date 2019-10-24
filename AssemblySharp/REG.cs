@@ -123,7 +123,7 @@ namespace AssemblySharp
             else if (exp.NodeType == ExpressionType.Add)
             {
                 var bi = exp as BinaryExpression;
-                return CheckRootAddExpression(bi.Left as Expression, bi.Right);
+                return CheckRootAddExpression(bi.Left, bi.Right);
             }
             else if (exp.NodeType == ExpressionType.Multiply)
             {
@@ -194,7 +194,7 @@ namespace AssemblySharp
             else if (exp.NodeType == ExpressionType.Add)
             {
                 var bi = exp as BinaryExpression;
-                return RootAddExpressionToString(bi.Left as Expression, bi.Right);
+                return RootAddExpressionToString(bi.Left, bi.Right);
             }
             else if (exp.NodeType == ExpressionType.Multiply)
             {
